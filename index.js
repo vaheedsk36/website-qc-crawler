@@ -1,7 +1,8 @@
-const puppeteer = require('puppeteer');
+import { launch } from 'puppeteer';
+import 'dotenv';
 
 async function crawl(url) {
-  const browser = await puppeteer.launch();
+  const browser = await launch();
   const page = await browser.newPage();
   await page.goto(url);
 
@@ -32,4 +33,4 @@ async function crawl(url) {
   await browser.close();
 }
 
-crawl('https://www.example.com'); // Replace with your target website URL
+crawl(process.env.WEBSITE_TO_CRAWL); // Replace with your target website URL
