@@ -1,5 +1,11 @@
 import { launch } from 'puppeteer';
-import 'dotenv';
+import path from 'path';
+import dotenv from 'dotenv';
+
+dotenv.config({
+    encoding: "utf8",
+    path: path.resolve(process.cwd(), ".env"),
+});
 
 async function crawl(url) {
   const browser = await launch();
@@ -10,22 +16,23 @@ async function crawl(url) {
   const links = await page.$$eval('a', (elements) =>
     elements.map((el) => el.href)
   );
+
   const images = await page.$$eval('img', (elements) =>
     elements.map((el) => el.src)
   );
 
   // Check each link for HTTP status code
   for (const link of links) {
-    const response = await page.goto(link, { waitUntil: 'networkidle0', timeout: 5000 });
-    if (!response.ok()) {
+    const response = await page.goto(link, { waitUntil: 'networkidle0' });
+    if (!response) {
       console.log(`Broken link found: ${link}`);
     }
   }
 
   // Check each image for availability
   for (const image of images) {
-    const response = await page.goto(image, { waitUntil: 'networkidle0', timeout: 5000 });
-    if (!response.ok()) {
+    const response = await page.goto(image, { waitUntil: 'networkidle0'});
+    if (!response) {
       console.log(`Missing image found: ${image}`);
     }
   }
